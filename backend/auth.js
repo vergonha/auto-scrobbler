@@ -1,9 +1,8 @@
 const md5       = require('md5');
 const axios     = require('axios')
-const Scrobble  = require('./scrobble')
 require('dotenv').config()
 
-export default class MobileAuth {
+class MobileAuth {
     constructor(user, password){
         this.user = user;
         this.password = password;
@@ -40,3 +39,5 @@ export default class MobileAuth {
             });
     };
 };
+
+module.exports = { MobileAuth };
