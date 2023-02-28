@@ -3,6 +3,155 @@ var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 
+// node_modules/dotenv/package.json
+var require_package = __commonJS({
+  "node_modules/dotenv/package.json"(exports2, module2) {
+    module2.exports = {
+      name: "dotenv",
+      version: "16.0.3",
+      description: "Loads environment variables from .env file",
+      main: "lib/main.js",
+      types: "lib/main.d.ts",
+      exports: {
+        ".": {
+          require: "./lib/main.js",
+          types: "./lib/main.d.ts",
+          default: "./lib/main.js"
+        },
+        "./config": "./config.js",
+        "./config.js": "./config.js",
+        "./lib/env-options": "./lib/env-options.js",
+        "./lib/env-options.js": "./lib/env-options.js",
+        "./lib/cli-options": "./lib/cli-options.js",
+        "./lib/cli-options.js": "./lib/cli-options.js",
+        "./package.json": "./package.json"
+      },
+      scripts: {
+        "dts-check": "tsc --project tests/types/tsconfig.json",
+        lint: "standard",
+        "lint-readme": "standard-markdown",
+        pretest: "npm run lint && npm run dts-check",
+        test: "tap tests/*.js --100 -Rspec",
+        prerelease: "npm test",
+        release: "standard-version"
+      },
+      repository: {
+        type: "git",
+        url: "git://github.com/motdotla/dotenv.git"
+      },
+      keywords: [
+        "dotenv",
+        "env",
+        ".env",
+        "environment",
+        "variables",
+        "config",
+        "settings"
+      ],
+      readmeFilename: "README.md",
+      license: "BSD-2-Clause",
+      devDependencies: {
+        "@types/node": "^17.0.9",
+        decache: "^4.6.1",
+        dtslint: "^3.7.0",
+        sinon: "^12.0.1",
+        standard: "^16.0.4",
+        "standard-markdown": "^7.1.0",
+        "standard-version": "^9.3.2",
+        tap: "^15.1.6",
+        tar: "^6.1.11",
+        typescript: "^4.5.4"
+      },
+      engines: {
+        node: ">=12"
+      }
+    };
+  }
+});
+
+// node_modules/dotenv/lib/main.js
+var require_main = __commonJS({
+  "node_modules/dotenv/lib/main.js"(exports2, module2) {
+    var fs = require("fs");
+    var path = require("path");
+    var os = require("os");
+    var packageJson = require_package();
+    var version = packageJson.version;
+    var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
+    function parse(src) {
+      const obj = {};
+      let lines = src.toString();
+      lines = lines.replace(/\r\n?/mg, "\n");
+      let match;
+      while ((match = LINE.exec(lines)) != null) {
+        const key = match[1];
+        let value = match[2] || "";
+        value = value.trim();
+        const maybeQuote = value[0];
+        value = value.replace(/^(['"`])([\s\S]*)\1$/mg, "$2");
+        if (maybeQuote === '"') {
+          value = value.replace(/\\n/g, "\n");
+          value = value.replace(/\\r/g, "\r");
+        }
+        obj[key] = value;
+      }
+      return obj;
+    }
+    function _log(message) {
+      console.log(`[dotenv@${version}][DEBUG] ${message}`);
+    }
+    function _resolveHome(envPath) {
+      return envPath[0] === "~" ? path.join(os.homedir(), envPath.slice(1)) : envPath;
+    }
+    function config(options) {
+      let dotenvPath = path.resolve(process.cwd(), ".env");
+      let encoding = "utf8";
+      const debug = Boolean(options && options.debug);
+      const override = Boolean(options && options.override);
+      if (options) {
+        if (options.path != null) {
+          dotenvPath = _resolveHome(options.path);
+        }
+        if (options.encoding != null) {
+          encoding = options.encoding;
+        }
+      }
+      try {
+        const parsed = DotenvModule.parse(fs.readFileSync(dotenvPath, { encoding }));
+        Object.keys(parsed).forEach(function(key) {
+          if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
+            process.env[key] = parsed[key];
+          } else {
+            if (override === true) {
+              process.env[key] = parsed[key];
+            }
+            if (debug) {
+              if (override === true) {
+                _log(`"${key}" is already defined in \`process.env\` and WAS overwritten`);
+              } else {
+                _log(`"${key}" is already defined in \`process.env\` and was NOT overwritten`);
+              }
+            }
+          }
+        });
+        return { parsed };
+      } catch (e) {
+        if (debug) {
+          _log(`Failed to load ${dotenvPath} ${e.message}`);
+        }
+        return { error: e };
+      }
+    }
+    var DotenvModule = {
+      config,
+      parse
+    };
+    module2.exports.config = DotenvModule.config;
+    module2.exports.parse = DotenvModule.parse;
+    module2.exports = DotenvModule;
+  }
+});
+
 // node_modules/crypt/crypt.js
 var require_crypt = __commonJS({
   "node_modules/crypt/crypt.js"(exports2, module2) {
@@ -139,7 +288,7 @@ var require_is_buffer = __commonJS({
 var require_md5 = __commonJS({
   "node_modules/md5/md5.js"(exports2, module2) {
     (function() {
-      var crypt = require_crypt(), utf8 = require_charenc().utf8, isBuffer = require_is_buffer(), bin = require_charenc().bin, md52 = function(message, options) {
+      var crypt = require_crypt(), utf8 = require_charenc().utf8, isBuffer = require_is_buffer(), bin = require_charenc().bin, md5 = function(message, options) {
         if (message.constructor == String)
           if (options && options.encoding === "binary")
             message = bin.stringToBytes(message);
@@ -155,7 +304,7 @@ var require_md5 = __commonJS({
         }
         m[l >>> 5] |= 128 << l % 32;
         m[(l + 64 >>> 9 << 4) + 14] = l;
-        var FF = md52._ff, GG = md52._gg, HH = md52._hh, II = md52._ii;
+        var FF = md5._ff, GG = md5._gg, HH = md5._hh, II = md5._ii;
         for (var i = 0; i < m.length; i += 16) {
           var aa = a, bb = b, cc = c, dd = d;
           a = FF(a, b, c, d, m[i + 0], 7, -680876936);
@@ -229,28 +378,28 @@ var require_md5 = __commonJS({
         }
         return crypt.endian([a, b, c, d]);
       };
-      md52._ff = function(a, b, c, d, x, s, t) {
+      md5._ff = function(a, b, c, d, x, s, t) {
         var n = a + (b & c | ~b & d) + (x >>> 0) + t;
         return (n << s | n >>> 32 - s) + b;
       };
-      md52._gg = function(a, b, c, d, x, s, t) {
+      md5._gg = function(a, b, c, d, x, s, t) {
         var n = a + (b & d | c & ~d) + (x >>> 0) + t;
         return (n << s | n >>> 32 - s) + b;
       };
-      md52._hh = function(a, b, c, d, x, s, t) {
+      md5._hh = function(a, b, c, d, x, s, t) {
         var n = a + (b ^ c ^ d) + (x >>> 0) + t;
         return (n << s | n >>> 32 - s) + b;
       };
-      md52._ii = function(a, b, c, d, x, s, t) {
+      md5._ii = function(a, b, c, d, x, s, t) {
         var n = a + (c ^ (b | ~d)) + (x >>> 0) + t;
         return (n << s | n >>> 32 - s) + b;
       };
-      md52._blocksize = 16;
-      md52._digestsize = 16;
+      md5._blocksize = 16;
+      md5._digestsize = 16;
       module2.exports = function(message, options) {
         if (message === void 0 || message === null)
           throw new Error("Illegal argument " + message);
-        var digestbytes = crypt.wordsToBytes(md52(message, options));
+        var digestbytes = crypt.wordsToBytes(md5(message, options));
         return options && options.asBytes ? digestbytes : options && options.asString ? bin.bytesToString(digestbytes) : crypt.bytesToHex(digestbytes);
       };
     })();
@@ -13553,192 +13702,43 @@ var require_axios = __commonJS({
       };
       return instance;
     }
-    var axios2 = createInstance(defaults$1);
-    axios2.Axios = Axios$1;
-    axios2.CanceledError = CanceledError;
-    axios2.CancelToken = CancelToken$1;
-    axios2.isCancel = isCancel;
-    axios2.VERSION = VERSION;
-    axios2.toFormData = toFormData;
-    axios2.AxiosError = AxiosError;
-    axios2.Cancel = axios2.CanceledError;
-    axios2.all = function all(promises) {
+    var axios = createInstance(defaults$1);
+    axios.Axios = Axios$1;
+    axios.CanceledError = CanceledError;
+    axios.CancelToken = CancelToken$1;
+    axios.isCancel = isCancel;
+    axios.VERSION = VERSION;
+    axios.toFormData = toFormData;
+    axios.AxiosError = AxiosError;
+    axios.Cancel = axios.CanceledError;
+    axios.all = function all(promises) {
       return Promise.all(promises);
     };
-    axios2.spread = spread;
-    axios2.isAxiosError = isAxiosError;
-    axios2.mergeConfig = mergeConfig;
-    axios2.AxiosHeaders = AxiosHeaders$1;
-    axios2.formToJSON = (thing) => formDataToJSON(utils.isHTMLForm(thing) ? new FormData(thing) : thing);
-    axios2.HttpStatusCode = HttpStatusCode$1;
-    axios2.default = axios2;
-    module2.exports = axios2;
-  }
-});
-
-// node_modules/dotenv/package.json
-var require_package = __commonJS({
-  "node_modules/dotenv/package.json"(exports2, module2) {
-    module2.exports = {
-      name: "dotenv",
-      version: "16.0.3",
-      description: "Loads environment variables from .env file",
-      main: "lib/main.js",
-      types: "lib/main.d.ts",
-      exports: {
-        ".": {
-          require: "./lib/main.js",
-          types: "./lib/main.d.ts",
-          default: "./lib/main.js"
-        },
-        "./config": "./config.js",
-        "./config.js": "./config.js",
-        "./lib/env-options": "./lib/env-options.js",
-        "./lib/env-options.js": "./lib/env-options.js",
-        "./lib/cli-options": "./lib/cli-options.js",
-        "./lib/cli-options.js": "./lib/cli-options.js",
-        "./package.json": "./package.json"
-      },
-      scripts: {
-        "dts-check": "tsc --project tests/types/tsconfig.json",
-        lint: "standard",
-        "lint-readme": "standard-markdown",
-        pretest: "npm run lint && npm run dts-check",
-        test: "tap tests/*.js --100 -Rspec",
-        prerelease: "npm test",
-        release: "standard-version"
-      },
-      repository: {
-        type: "git",
-        url: "git://github.com/motdotla/dotenv.git"
-      },
-      keywords: [
-        "dotenv",
-        "env",
-        ".env",
-        "environment",
-        "variables",
-        "config",
-        "settings"
-      ],
-      readmeFilename: "README.md",
-      license: "BSD-2-Clause",
-      devDependencies: {
-        "@types/node": "^17.0.9",
-        decache: "^4.6.1",
-        dtslint: "^3.7.0",
-        sinon: "^12.0.1",
-        standard: "^16.0.4",
-        "standard-markdown": "^7.1.0",
-        "standard-version": "^9.3.2",
-        tap: "^15.1.6",
-        tar: "^6.1.11",
-        typescript: "^4.5.4"
-      },
-      engines: {
-        node: ">=12"
-      }
-    };
-  }
-});
-
-// node_modules/dotenv/lib/main.js
-var require_main = __commonJS({
-  "node_modules/dotenv/lib/main.js"(exports2, module2) {
-    var fs = require("fs");
-    var path = require("path");
-    var os = require("os");
-    var packageJson = require_package();
-    var version = packageJson.version;
-    var LINE = /(?:^|^)\s*(?:export\s+)?([\w.-]+)(?:\s*=\s*?|:\s+?)(\s*'(?:\\'|[^'])*'|\s*"(?:\\"|[^"])*"|\s*`(?:\\`|[^`])*`|[^#\r\n]+)?\s*(?:#.*)?(?:$|$)/mg;
-    function parse(src) {
-      const obj = {};
-      let lines = src.toString();
-      lines = lines.replace(/\r\n?/mg, "\n");
-      let match;
-      while ((match = LINE.exec(lines)) != null) {
-        const key = match[1];
-        let value = match[2] || "";
-        value = value.trim();
-        const maybeQuote = value[0];
-        value = value.replace(/^(['"`])([\s\S]*)\1$/mg, "$2");
-        if (maybeQuote === '"') {
-          value = value.replace(/\\n/g, "\n");
-          value = value.replace(/\\r/g, "\r");
-        }
-        obj[key] = value;
-      }
-      return obj;
-    }
-    function _log(message) {
-      console.log(`[dotenv@${version}][DEBUG] ${message}`);
-    }
-    function _resolveHome(envPath) {
-      return envPath[0] === "~" ? path.join(os.homedir(), envPath.slice(1)) : envPath;
-    }
-    function config(options) {
-      let dotenvPath = path.resolve(process.cwd(), ".env");
-      let encoding = "utf8";
-      const debug = Boolean(options && options.debug);
-      const override = Boolean(options && options.override);
-      if (options) {
-        if (options.path != null) {
-          dotenvPath = _resolveHome(options.path);
-        }
-        if (options.encoding != null) {
-          encoding = options.encoding;
-        }
-      }
-      try {
-        const parsed = DotenvModule.parse(fs.readFileSync(dotenvPath, { encoding }));
-        Object.keys(parsed).forEach(function(key) {
-          if (!Object.prototype.hasOwnProperty.call(process.env, key)) {
-            process.env[key] = parsed[key];
-          } else {
-            if (override === true) {
-              process.env[key] = parsed[key];
-            }
-            if (debug) {
-              if (override === true) {
-                _log(`"${key}" is already defined in \`process.env\` and WAS overwritten`);
-              } else {
-                _log(`"${key}" is already defined in \`process.env\` and was NOT overwritten`);
-              }
-            }
-          }
-        });
-        return { parsed };
-      } catch (e) {
-        if (debug) {
-          _log(`Failed to load ${dotenvPath} ${e.message}`);
-        }
-        return { error: e };
-      }
-    }
-    var DotenvModule = {
-      config,
-      parse
-    };
-    module2.exports.config = DotenvModule.config;
-    module2.exports.parse = DotenvModule.parse;
-    module2.exports = DotenvModule;
+    axios.spread = spread;
+    axios.isAxiosError = isAxiosError;
+    axios.mergeConfig = mergeConfig;
+    axios.AxiosHeaders = AxiosHeaders$1;
+    axios.formToJSON = (thing) => formDataToJSON(utils.isHTMLForm(thing) ? new FormData(thing) : thing);
+    axios.HttpStatusCode = HttpStatusCode$1;
+    axios.default = axios;
+    module2.exports = axios;
   }
 });
 
 // backend/auth.js
 var require_auth = __commonJS({
   "backend/auth.js"(exports2, module2) {
-    var md52 = require_md5();
-    var axios2 = require_axios();
+    var md5 = require_md5();
+    var axios = require_axios();
     require_main().config();
-    var MobileAuth2 = class {
+    var MobileAuth = class {
       constructor(user, password) {
         this.user = user;
         this.password = password;
         this.baseURL = "http://ws.audioscrobbler.com/2.0/?";
       }
       getMobileSession() {
-        const sig = md52([
+        const sig = md5([
           "api_key",
           process.env.API,
           "method",
@@ -13757,7 +13757,7 @@ var require_auth = __commonJS({
           username: this.user || process.env.USERNAME,
           password: this.password || process.env.PASSWD
         });
-        return axios2.post(this.baseURL + body).then((res) => {
+        return axios.post(this.baseURL + body).then((res) => {
           if (res.status == 200) {
             return res.data;
           }
@@ -13771,72 +13771,98 @@ var require_auth = __commonJS({
         });
       }
     };
-    module2.exports = { MobileAuth: MobileAuth2 };
+    module2.exports = { MobileAuth };
   }
 });
 
 // backend/scrobble.js
-var md5 = require_md5();
-var axios = require_axios();
-var { MobileAuth } = require_auth();
-require_main().config();
-var Scrobble = class {
-  constructor(user, password) {
-    this.user = user;
-    this.password = password;
-    this.baseURL = "http://ws.audioscrobbler.com/2.0/?";
-  }
-  async scrobble(track, artist, timestamp, prettyPrint) {
-    const Wrapper = new MobileAuth(this.user, this.password);
-    if (!Wrapper) {
-      return false;
-    }
-    let sessionKey = await Wrapper.getMobileSession().then((response) => {
-      return new RegExp(/<key>(.*)<\/key>/).exec(response)[1];
-    });
-    const sig = md5([
-      "api_key",
-      process.env.API,
-      "artist",
-      artist,
-      "method",
-      "track.scrobble",
-      "sk",
-      sessionKey,
-      "timestamp",
-      timestamp,
-      "track",
-      track,
-      process.env.SECRET
-    ].join(""));
-    const body = new URLSearchParams({
-      artist,
-      track,
-      timestamp,
-      api_key: process.env.API,
-      api_sig: sig,
-      sk: sessionKey,
-      method: "track.scrobble"
-    });
-    return axios.post(this.baseURL + body).then((res) => {
-      if (res.status == 200) {
-        if (prettyPrint) {
-          console.log(`[OK] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Scrobbled`);
-          return true;
-        } else {
-          return true;
-        }
-        ;
+var require_scrobble = __commonJS({
+  "backend/scrobble.js"(exports2, module2) {
+    var md5 = require_md5();
+    var axios = require_axios();
+    var { MobileAuth } = require_auth();
+    require_main().config();
+    var Scrobble2 = class {
+      constructor(user, password) {
+        this.user = user;
+        this.password = password;
+        this.baseURL = "http://ws.audioscrobbler.com/2.0/?";
       }
-    }).catch((err) => {
-      console.log("Error while trying to scrobble\n");
-      console.log(`[${err.response.status}] Error: 
+      async scrobble(track2, artist2, timestamp, prettyPrint) {
+        const Wrapper = new MobileAuth(this.user, this.password);
+        if (!Wrapper) {
+          return false;
+        }
+        let sessionKey = await Wrapper.getMobileSession().then((response) => {
+          return new RegExp(/<key>(.*)<\/key>/).exec(response)[1];
+        });
+        const sig = md5([
+          "api_key",
+          process.env.API,
+          "artist",
+          artist2,
+          "method",
+          "track.scrobble",
+          "sk",
+          sessionKey,
+          "timestamp",
+          timestamp,
+          "track",
+          track2,
+          process.env.SECRET
+        ].join(""));
+        const body = new URLSearchParams({
+          artist: artist2,
+          track: track2,
+          timestamp,
+          api_key: process.env.API,
+          api_sig: sig,
+          sk: sessionKey,
+          method: "track.scrobble"
+        });
+        return axios.post(this.baseURL + body).then((res) => {
+          if (res.status == 200) {
+            if (prettyPrint) {
+              console.log(`[OK] ${artist2[0].toUpperCase() + artist2.slice(1)} - ${track2[0].toUpperCase() + track2.slice(1)} | Scrobbled`);
+              return true;
+            } else {
+              return true;
+            }
+            ;
+          }
+        }).catch((err) => {
+          console.log("Error while trying to scrobble\n");
+          console.log(`[${err.response.status}] Error: 
  ${err.response.data}`);
-      return false;
-    });
+          return false;
+        });
+      }
+    };
+    module2.exports = { Scrobble: Scrobble2 };
   }
-};
-module.exports = { Scrobble };
+});
+
+// backend/index.js
+require_main().config();
+var { Scrobble } = require_scrobble();
+function main() {
+  setTimeout(() => {
+    let date = new Date(new Date(2023, 2, 1).getTime() + Math.random() * ((/* @__PURE__ */ new Date()).getTime() - new Date(2023, 2, 1).getTime()));
+    const Wrapper = new Scrobble();
+    try {
+      Wrapper.scrobble(process.env.TRACK, process.env.ARTIST, Date.parse(date) / 1e3, true);
+    } catch (error) {
+      console.log(`[Fail] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Not Scrobbled`);
+    }
+    if (true) {
+      main();
+    }
+    ;
+  }, process.env.TIMEOUT * 1e3);
+}
+if (require.main === module) {
+  main();
+}
 /*! Bundled license information:
 
 is-buffer/index.js:

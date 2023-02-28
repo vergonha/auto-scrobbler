@@ -3,24 +3,17 @@ const axios     = require('axios')
 const { MobileAuth } = require('./auth')
 require('dotenv').config()
 
-export default class Scrobble {
+class Scrobble {
     constructor(user, password){
         this.user = user;
         this.password = password;
         this.baseURL = "http://ws.audioscrobbler.com/2.0/?";
     };
 
-    async scrobble(track, artist, timestamp){
+    async scrobble(track, artist, timestamp, prettyPrint){
         const Wrapper = new MobileAuth(this.user, this.password)
+        if(!Wrapper){return false}
         
-        const old_sig = md5([
-            "api_key", process.env.API,
-            "method",  "auth.getMobileSession",
-            //It needs to be in that exact order for the signature to work.
-            "password", (this.password || process.env.PASSWD),
-            "username", (this.user || process.env.USERNAME),
-            process.env.SECRET].join(""));
-
         let sessionKey = await Wrapper.getMobileSession()
             .then(response => {return new RegExp(/<key>(.*)<\/key>/).exec(response)[1]})
 
@@ -46,7 +39,12 @@ export default class Scrobble {
         })
 
         return axios.post(this.baseURL + body)
-            .then(res => {if(res.status == 200){ return true }})
+            .then(res => {if(res.status == 200){ 
+                if(prettyPrint){
+                    console.log(`[OK] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Scrobbled`)
+                    return true;
+                } else { return true } ; 
+             }})
             .catch(err => {
                 console.log("Error while trying to scrobble\n")
                 console.log(`[${err.response.status}] Error: \n ${err.response.data}`)
@@ -55,9 +53,4 @@ export default class Scrobble {
     };
 };
 
-
-// Scrobble test
-//let i= new Scrobble();
-//i.scrobble('harbor', 'clairo', parseInt(Math.floor(Date.now() / 1000)))
-//    .then(sk => console.log(sk))
-
+module.exports = { Scrobble }

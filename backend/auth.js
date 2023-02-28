@@ -33,9 +33,10 @@ class MobileAuth {
         return axios.post(this.baseURL + body)
             .then(res => {if(res.status == 200){ return res.data }})
             .then(data => { return data })
-            .catch( err => {
+            .catch(err => {
                 console.log("Probably invalid user:password combination.")
                 console.log(`[${err.response.status}]:\n ${err.response.data}`)
+                return false;
             });
     };
 };

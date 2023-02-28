@@ -13765,6 +13765,7 @@ var MobileAuth = class {
       console.log("Probably invalid user:password combination.");
       console.log(`[${err.response.status}]:
  ${err.response.data}`);
+      return false;
     });
   }
 };
