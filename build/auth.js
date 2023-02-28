@@ -13755,18 +13755,17 @@ var MobileAuth = class {
       username: this.user || process.env.USERNAME,
       password: this.password || process.env.PASSWD
     });
-    return axios.post(this.baseURL + body).then((res) => {
-      if (res.status == 200) {
-        return res.data;
-      }
-    }).then((data) => {
-      return data;
-    }).catch((err) => {
-      console.log("Probably invalid user:password combination.");
-      console.log(`[${err.response.status}]:
- ${err.response.data}`);
+    try {
+      return axios.post(this.baseURL + body).then((res) => {
+        if (res.status == 200) {
+          return res.data;
+        }
+      }).then((data) => {
+        return data;
+      });
+    } catch (error) {
       return false;
-    });
+    }
   }
 };
 module.exports = { MobileAuth };

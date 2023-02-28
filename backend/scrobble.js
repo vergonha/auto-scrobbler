@@ -46,6 +46,12 @@ class Scrobble {
                 } else { return true } ; 
              }})
             .catch(err => {
+                if(err.response.status == 429){
+                    console.clear()
+                    console.log("[Fail] Rate limited. Please, wait some minutes before try again...")
+                    console.log(`[Fail] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Not Scrobbled`)
+                    process.exit();
+                };
                 console.log("Error while trying to scrobble\n")
                 console.log(`[${err.response.status}] Error: \n ${err.response.data}`)
                 return false;

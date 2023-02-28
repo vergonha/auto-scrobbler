@@ -13757,18 +13757,17 @@ var require_auth = __commonJS({
           username: this.user || process.env.USERNAME,
           password: this.password || process.env.PASSWD
         });
-        return axios2.post(this.baseURL + body).then((res) => {
-          if (res.status == 200) {
-            return res.data;
-          }
-        }).then((data) => {
-          return data;
-        }).catch((err) => {
-          console.log("Probably invalid user:password combination.");
-          console.log(`[${err.response.status}]:
- ${err.response.data}`);
+        try {
+          return axios2.post(this.baseURL + body).then((res) => {
+            if (res.status == 200) {
+              return res.data;
+            }
+          }).then((data) => {
+            return data;
+          });
+        } catch (error) {
           return false;
-        });
+        }
       }
     };
     module2.exports = { MobileAuth: MobileAuth2 };
@@ -13829,6 +13828,13 @@ var Scrobble = class {
         ;
       }
     }).catch((err) => {
+      if (err.response.status == 429) {
+        console.clear();
+        console.log("[Fail] Rate limited. Please, wait some minutes before try again...");
+        console.log(`[Fail] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Not Scrobbled`);
+        process.exit();
+      }
+      ;
       console.log("Error while trying to scrobble\n");
       console.log(`[${err.response.status}] Error: 
  ${err.response.data}`);
