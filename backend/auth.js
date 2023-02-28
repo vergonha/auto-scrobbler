@@ -34,9 +34,7 @@ class MobileAuth {
             return axios.post(this.baseURL + body)
                 .then(res => {if(res.status == 200){ return res.data }})
                 .then(data => { return data })
-        } catch (error) {
-            return false;
-        }
+        } catch (err) { return false }
     };
 };
 

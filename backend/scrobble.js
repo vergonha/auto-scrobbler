@@ -1,6 +1,6 @@
-const md5       = require('md5')
-const axios     = require('axios')
-const { MobileAuth } = require('./auth')
+const md5               = require('md5')
+const axios             = require('axios')
+const { MobileAuth }    = require('./auth')
 require('dotenv').config()
 
 class Scrobble {
