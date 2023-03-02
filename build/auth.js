@@ -13755,17 +13755,21 @@ var MobileAuth = class {
       username: this.user || process.env.USERNAME,
       password: this.password || process.env.PASSWD
     });
-    try {
-      return axios.post(this.baseURL + body).then((res) => {
-        if (res.status == 200) {
-          return res.data;
-        }
-      }).then((data) => {
-        return data;
-      });
-    } catch (error) {
-      return false;
-    }
+    return axios.post(this.baseURL + body).then((res) => {
+      if (res.status == 200) {
+        return res.data;
+      }
+    }).then((data) => {
+      return data;
+    }).catch((err) => {
+      let regError = new RegExp(/<error code=".*">(.*?)<\/error>/);
+      let reCode = new RegExp(/<error code="(.*?)">/);
+      console.log(`[${err.response.status}] Error: `);
+      console.log(`${regError.exec(err.response.data)[1]}`);
+      console.log(`Error code: ${reCode.exec(err.response.data)[1]}`);
+      console.log("\nSee the API errors better specified at this link: \nhttps://lastfm-docs.github.io/api-docs/codes/#lastfm-error-code-10-invalid-api-token");
+      process.exit();
+    });
   }
 };
 module.exports = { MobileAuth };

@@ -13757,17 +13757,21 @@ var require_auth = __commonJS({
           username: this.user || process.env.USERNAME,
           password: this.password || process.env.PASSWD
         });
-        try {
-          return axios.post(this.baseURL + body).then((res) => {
-            if (res.status == 200) {
-              return res.data;
-            }
-          }).then((data) => {
-            return data;
-          });
-        } catch (error) {
-          return false;
-        }
+        return axios.post(this.baseURL + body).then((res) => {
+          if (res.status == 200) {
+            return res.data;
+          }
+        }).then((data) => {
+          return data;
+        }).catch((err) => {
+          let regError = new RegExp(/<error code=".*">(.*?)<\/error>/);
+          let reCode = new RegExp(/<error code="(.*?)">/);
+          console.log(`[${err.response.status}] Error: `);
+          console.log(`${regError.exec(err.response.data)[1]}`);
+          console.log(`Error code: ${reCode.exec(err.response.data)[1]}`);
+          console.log("\nSee the API errors better specified at this link: \nhttps://lastfm-docs.github.io/api-docs/codes/#lastfm-error-code-10-invalid-api-token");
+          process.exit();
+        });
       }
     };
     module2.exports = { MobileAuth };
@@ -13852,6 +13856,11 @@ var require_scrobble = __commonJS({
 require_main().config();
 var { Scrobble } = require_scrobble();
 function main() {
+  if (!(process.env.API && process.env.SECRET && process.env.USERNAME && process.env.PASSWD && process.env.TRACK && process.env.ARTIST && process.env.TIMEOUT)) {
+    console.log("[Fail] Please, check your enviroment variables in .env file.");
+    process.exit();
+  }
+  ;
   setTimeout(() => {
     let date = new Date(new Date(2023, 2, 1).getTime() + Math.random() * ((/* @__PURE__ */ new Date()).getTime() - new Date(2023, 2, 1).getTime()));
     const Wrapper = new Scrobble();

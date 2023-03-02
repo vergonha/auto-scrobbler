@@ -5,7 +5,7 @@
   "main": "build/scrobble.js",
   "scripts": {
     "build": "esbuild `find backend \\( -name '*.js' \\)` --bundle --outdir=build --platform=node",
-    "start": "node build/scrobble.js"
+    "start": "node build/index.js"
   },
   "author": "",
   "license": "ISC",
