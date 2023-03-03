@@ -1,3 +1,4 @@
+const chalk             = require('chalk')
 const md5               = require('md5')
 const axios             = require('axios')
 const { MobileAuth }    = require('./auth')
@@ -43,9 +44,15 @@ class Scrobble {
                 if(prettyPrint){
                     let reIgnored = new RegExp(/ignored="(.*?)"/).exec(res.data)[1]
                     if(reIgnored == 0){
-                        console.log(`[OK] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Scrobbled`)
+                        console.log(
+                            chalk.bgGreen("[OK]") +
+                            chalk.yellow(` | ${artist} - ${track} | `) +
+                            chalk.green("Scrobbled")
+                            )
                     } else {
-                        console.log(`[OK] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Ignored`)
+                        chalk.bgRed("[Fail]") +
+                        chalk.yellow(` | ${artist} - ${track} | `) +
+                        chalk.red("Ignored")
                     }
                     return true;
                 } else { return true } ; 
@@ -53,12 +60,11 @@ class Scrobble {
             .catch(err => {
                 if(err.response.status == 429){
                     console.clear()
-                    console.log("[Fail] Rate limited. Please, wait some minutes before try again...")
-                    console.log(`[Fail] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Not Scrobbled`)
+                    console.log(chalk.red("[Fail] Rate limited. Please, wait some minutes before try again..."))
                     process.exit();
                 };
-                console.log("Error while trying to scrobble\n")
-                console.log(`[${err.response.status}] Error: \n ${err.response.data}`)
+                console.log(chalk.bgRed("Error while trying to scrobble\n"))
+                console.log(chalk.red(`[${err.response.status}] Error: \n ${err.response.data}`))
                 return false;
             })
     };

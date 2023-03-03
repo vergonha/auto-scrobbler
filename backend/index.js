@@ -1,3 +1,4 @@
+const chalk = require('chalk')
 require('dotenv').config();
 
 const { Scrobble } = require('./scrobble')
@@ -11,7 +12,7 @@ async function main(){
         process.env.TRACKS &&
         process.env.TIMEOUT
     )){
-        console.log("[Fail] Please, check your enviroment variables in .env file.")
+        console.log(chalk.bgRed("[Fail]"), chalk.red("Please, check your enviroment variables in .env file."))
         process.exit();
     };
     

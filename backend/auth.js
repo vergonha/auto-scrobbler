@@ -1,5 +1,6 @@
 const md5       = require('md5');
 const axios     = require('axios')
+const chalk     = require('chalk')
 require('dotenv').config()
 
 class MobileAuth {
@@ -36,11 +37,11 @@ class MobileAuth {
             .catch(err => {
                 let regError = new RegExp(/<error code=".*">(.*?)<\/error>/)
                 let reCode = new RegExp(/<error code="(.*?)">/)
-                console.log(`[${err.response.status}] Error: `);
-                console.log(`${regError.exec(err.response.data)[1]}`);
-                console.log(`Error code: ${reCode.exec(err.response.data)[1]}`);
-                console.log("\nSee the API errors better specified at this link: \n" + 
-               "https://lastfm-docs.github.io/api-docs/codes/#lastfm-error-code-10-invalid-api-token")
+                console.log(chalk.bgRed(`[${err.response.status}] Error: `));
+                console.log(chalk.red(`${regError.exec(err.response.data)[1]}`));
+                console.log(chalk.red(`Error code: ${reCode.exec(err.response.data)[1]}`));
+                console.log(chalk.yellow("\nSee the API errors better specified at this link: \n" + 
+                "https://lastfm-docs.github.io/api-docs/codes/#lastfm-error-code-10-invalid-api-token"))
                 process.exit();
             })
     };
