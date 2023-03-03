@@ -41,7 +41,6 @@ class Scrobble {
         return axios.post(this.baseURL + body)
             .then(res => {if(res.status == 200){ 
                 if(prettyPrint){
-                    console.log(`[OK] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Scrobbled`)
                     return true;
                 } else { return true } ; 
              }})

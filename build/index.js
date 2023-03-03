@@ -13791,7 +13791,7 @@ var require_scrobble = __commonJS({
         this.password = password;
         this.baseURL = "http://ws.audioscrobbler.com/2.0/?";
       }
-      async scrobble(track2, artist2, timestamp, prettyPrint) {
+      async scrobble(track, artist2, timestamp, prettyPrint) {
         const Wrapper = new MobileAuth(this.user, this.password);
         if (!Wrapper) {
           return false;
@@ -13811,12 +13811,12 @@ var require_scrobble = __commonJS({
           "timestamp",
           timestamp,
           "track",
-          track2,
+          track,
           process.env.SECRET
         ].join(""));
         const body = new URLSearchParams({
           artist: artist2,
-          track: track2,
+          track,
           timestamp,
           api_key: process.env.API,
           api_sig: sig,
@@ -13826,7 +13826,12 @@ var require_scrobble = __commonJS({
         return axios.post(this.baseURL + body).then((res) => {
           if (res.status == 200) {
             if (prettyPrint) {
-              console.log(`[OK] ${artist2[0].toUpperCase() + artist2.slice(1)} - ${track2[0].toUpperCase() + track2.slice(1)} | Scrobbled`);
+              let reIgnored = new RegExp(/ignored="(.*?)"/).exec(res.data)[1];
+              if (reIgnored == 0) {
+                console.log(`[OK] ${artist2[0].toUpperCase() + artist2.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Scrobbled`);
+              } else {
+                console.log(`[OK] ${artist2[0].toUpperCase() + artist2.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Ignored`);
+              }
               return true;
             } else {
               return true;
@@ -13837,7 +13842,7 @@ var require_scrobble = __commonJS({
           if (err.response.status == 429) {
             console.clear();
             console.log("[Fail] Rate limited. Please, wait some minutes before try again...");
-            console.log(`[Fail] ${artist2[0].toUpperCase() + artist2.slice(1)} - ${track2[0].toUpperCase() + track2.slice(1)} | Not Scrobbled`);
+            console.log(`[Fail] ${artist2[0].toUpperCase() + artist2.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Not Scrobbled`);
             process.exit();
           }
           ;
@@ -13855,25 +13860,29 @@ var require_scrobble = __commonJS({
 // backend/index.js
 require_main().config();
 var { Scrobble } = require_scrobble();
-function main() {
-  if (!(process.env.API && process.env.SECRET && process.env.USERNAME && process.env.PASSWD && process.env.TRACK && process.env.ARTIST && process.env.TIMEOUT)) {
+async function main() {
+  if (!(process.env.API && process.env.SECRET && process.env.USERNAME && process.env.PASSWD && process.env.TRACKS && process.env.TIMEOUT)) {
     console.log("[Fail] Please, check your enviroment variables in .env file.");
     process.exit();
   }
   ;
-  setTimeout(() => {
+  let tracksObject = JSON.parse(process.env.TRACKS);
+  const sleep = (m) => new Promise((r) => setTimeout(r, m));
+  for (let track of tracksObject) {
+    await sleep(process.env.TIMEOUT * 1e3);
     let date = new Date(new Date(2023, 2, 1).getTime() + Math.random() * ((/* @__PURE__ */ new Date()).getTime() - new Date(2023, 2, 1).getTime()));
     const Wrapper = new Scrobble();
     try {
-      Wrapper.scrobble(process.env.TRACK, process.env.ARTIST, Date.parse(date) / 1e3, true);
-    } catch (error) {
+      Wrapper.scrobble(track["name"], track["artist"], Date.parse(date) / 1e3, true);
+    } catch {
       console.log(`[Fail] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Not Scrobbled`);
     }
-    if (true) {
-      main();
-    }
-    ;
-  }, process.env.TIMEOUT * 1e3);
+  }
+  ;
+  if (true) {
+    main();
+  }
+  ;
 }
 if (require.main === module) {
   main();
