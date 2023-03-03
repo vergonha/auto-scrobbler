@@ -1,7 +1,7 @@
 const chalk = require('chalk')
 require('dotenv').config();
 
-const { Scrobble } = require('./scrobble')
+const { Scrobble } = require('./backend/scrobble')
 
 async function main(){
     if(!(
