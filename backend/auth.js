@@ -37,12 +37,16 @@ class MobileAuth {
             .catch(err => {
                 let regError = new RegExp(/<error code=".*">(.*?)<\/error>/)
                 let reCode = new RegExp(/<error code="(.*?)">/)
-                console.log(chalk.bgRed(`[${err.response.status}] Error: `));
-                console.log(chalk.red(`${regError.exec(err.response.data)[1]}`));
-                console.log(chalk.red(`Error code: ${reCode.exec(err.response.data)[1]}`));
-                console.log(chalk.yellow("\nSee the API errors better specified at this link: \n" + 
-                "https://lastfm-docs.github.io/api-docs/codes/#lastfm-error-code-10-invalid-api-token"))
-                process.exit();
+                    if(reCode != 8){
+                        console.log(chalk.bgRed(`[${err.response.status}] Error: `));
+                        console.log(chalk.red(`${regError.exec(err.response.data)[1]}`));
+                        console.log(chalk.red(`Error code: ${reCode.exec(err.response.data)[1]}`));
+                        console.log(chalk.yellow("\nSee the API errors better specified at this link: \n" + 
+                        "https://lastfm-docs.github.io/api-docs/codes/#lastfm-error-code-10-invalid-api-token"))
+                        process.exit();
+                    } else {
+                        throw err;
+                    };
             })
     };
 };

@@ -1,10 +1,10 @@
 {
-  "name": "scrobblas",
+  "name": "auto-scrobbler",
   "version": "1.0.0",
   "description": "",
   "main": "build/scrobble.js",
   "scripts": {
-    "start": "node backend/index.js"
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
