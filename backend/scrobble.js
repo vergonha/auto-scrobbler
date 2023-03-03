@@ -41,6 +41,12 @@ class Scrobble {
         return axios.post(this.baseURL + body)
             .then(res => {if(res.status == 200){ 
                 if(prettyPrint){
+                    let reIgnored = new RegExp(/ignored="(.*?)"/).exec(res.data)[1]
+                    if(reIgnored == 0){
+                        console.log(`[OK] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Scrobbled`)
+                    } else {
+                        console.log(`[OK] ${artist[0].toUpperCase() + artist.slice(1)} - ${track[0].toUpperCase() + track.slice(1)} | Ignored`)
+                    }
                     return true;
                 } else { return true } ; 
              }})
