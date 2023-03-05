@@ -12,13 +12,13 @@ class MobileAuth {
 
     getMobileSession(){
         // Combo: 
-        // md5(api_key<YOUR_API_KEY>method<auth.getMobileSession>password<YOUR_PASSWD>username<YOUR_USERNAME><YOUR_SECRET>)
+        // md5(api_key<YOUR_API_KEY>method<auth.getMobileSession>password<YOUR_PASSWD>username<USERNAME><YOUR_SECRET>)
         const sig = md5([
             "api_key", process.env.API,
             "method",  "auth.getMobileSession",
             //It needs to be in that exact order for the signature to work.
             "password", (this.password || process.env.PASSWD),
-            "username", (this.user || process.env.USERNAME),
+            "username", (this.user || process.env.USER_NAME),
             process.env.SECRET].join(""));
             
 
@@ -26,7 +26,7 @@ class MobileAuth {
             api_key: process.env.API,
             api_sig: sig,
             method: "auth.getMobileSession",
-            username: (this.user || process.env.USERNAME),
+            username: (this.user || process.env.USER_NAME),
             password: (this.password || process.env.PASSWD)
             
         })

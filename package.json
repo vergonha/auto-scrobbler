@@ -1,8 +1,17 @@
 {
   "name": "auto-scrobbler",
   "version": "1.0.0",
-  "description": "",
-  "main": "build/scrobble.js",
+  "description": "LastFM Auto Scrobbler using Mobile Auth. Supports multiple tracks.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vergonha/auto-scrobbler.git"
+  },
+  "keywords": [
+    "LastFM",
+    "Scrobbles",
+    "Auth"
+  ],
   "scripts": {
     "start": "node index.js"
   },

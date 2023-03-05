@@ -24,7 +24,7 @@ After that, rename the ".env.example" file to ".env".
 ```
 API=YOUR API KEY
 SECRET=YOUR SECRET KEY
-USERNAME=YOUR USERNAME
+USER_NAME=YOUR USER_NAME
 PASSWD=YOUR PASSWORD
 TRACKS='[
     {
