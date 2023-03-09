@@ -61,7 +61,7 @@ TRACKS='[
     {
         "name": "Glimpse of Us",
         "artist": "Joji"
-    },
+    }
 ]'
 ```
 
