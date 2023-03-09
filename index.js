@@ -21,7 +21,9 @@ async function main(){
     for(let track of tracksObject){
             await sleep(process.env.TIMEOUT * 1000);
             // Generates random timestamp
-            let date = new Date(new Date(2023, 2, 1).getTime() + Math.random() * (new Date().getTime() - new Date(2023, 2, 1).getTime()));
+            let atualMonth = new Date().getMonth()
+            let atualDay = new Date().getDay()
+            let date = new Date(new Date(2023, atualMonth, atualDay).getTime() + Math.random() * (new Date().getTime() - new Date(2023, atualMonth, atualDay).getTime()));
             //
             const Wrapper = new Scrobble();
             try { Wrapper.scrobble(track['name'], track['artist'], (Date.parse(date)/1000), true)} 
