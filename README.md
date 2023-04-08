@@ -3,7 +3,7 @@
 
 Automatic scrobbler for you scrobble your favorite track as many times as you want. 
 
-![LastFM Scrobbles](https://imgur.com/TYkLHn5.png)
+![LastFM Scrobbles](https://imgur.com/X7MzwTD.png)
 ### **⚠️ Attention ⚠️**
 Remember that the daily limit of Scrobbles on LastFM is 2800. More than that will cause the "Rate Limit" error, so you will be 24 hours without being able to interact with the scrobble API.
 
