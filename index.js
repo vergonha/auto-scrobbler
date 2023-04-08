@@ -16,7 +16,15 @@ async function main(){
         process.exit();
     };
     
-    let tracksObject = JSON.parse(process.env.TRACKS)
+    let tracksObject;
+    
+    try {
+        tracksObject = JSON.parse(process.env.TRACKS)   
+    } catch (error) {
+        console.log(chalk.bgRed("[Fail]"), chalk.red("Make sure the tracks are in the right format, with commas in the right place, double quotes, etc..."))
+        process.exit();
+    }
+    
     const sleep = m => new Promise(r => setTimeout(r, m));
     for(let track of tracksObject){
             await sleep(process.env.TIMEOUT * 1000);
