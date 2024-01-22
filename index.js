@@ -9,7 +9,7 @@ async function main() {
     if (!(
         process.env.API &&
         process.env.SECRET &&
-        process.env.LOGIN &&
+        process.env.USER_NAME &&
         process.env.PASSWD &&
         process.env.TRACKS &&
         process.env.TIMEOUT

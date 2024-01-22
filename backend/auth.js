@@ -18,7 +18,7 @@ class MobileAuth {
             "method",  "auth.getMobileSession",
             //It needs to be in that exact order for the signature to work.
             "password", (this.password || process.env.PASSWD),
-            "username", (this.user || process.env.LOGIN),
+            "username", (this.user || process.env.USER_NAME),
             process.env.SECRET].join(""));
             
 
@@ -26,7 +26,7 @@ class MobileAuth {
             api_key: process.env.API,
             api_sig: sig,
             method: "auth.getMobileSession",
-            username: (this.user || process.env.LOGIN),
+            username: (this.user || process.env.USER_NAME),
             password: (this.password || process.env.PASSWD)
             
         })
