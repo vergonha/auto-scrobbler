@@ -18,7 +18,7 @@ class MobileAuth {
             "method",  "auth.getMobileSession",
             //It needs to be in that exact order for the signature to work.
             "password", (this.password || process.env.PASSWD),
-            "username", (this.user || process.env.USER_NAME),
+            "username", (this.user || process.env.LOGIN),
             process.env.SECRET].join(""));
             
 
@@ -26,14 +26,14 @@ class MobileAuth {
             api_key: process.env.API,
             api_sig: sig,
             method: "auth.getMobileSession",
-            username: (this.user || process.env.USER_NAME),
+            username: (this.user || process.env.LOGIN),
             password: (this.password || process.env.PASSWD)
             
         })
 
         return axios.post(this.baseURL + body)
             .then(res => {if(res.status == 200){ return res.data }})
-            .then(data => { return data })
+            .then(data => { return new RegExp(/<key>(.*)<\/key>/).exec(data)[1] })
             .catch(err => {
                 let regError = new RegExp(/<error code=".*">(.*?)<\/error>/)
                 let reCode = new RegExp(/<error code="(.*?)">/)
@@ -42,7 +42,7 @@ class MobileAuth {
                         console.log(chalk.red(`${regError.exec(err.response.data)[1]}`));
                         console.log(chalk.red(`Error code: ${reCode.exec(err.response.data)[1]}`));
                         console.log(chalk.yellow("\nSee the API errors better specified at this link: \n" + 
-                        "https://lastfm-docs.github.io/api-docs/codes/#lastfm-error-code-10-invalid-api-token"))
+                        "https://lastfm-docs.github.io/api-docs/codes/"))
                         process.exit();
                     } else {
                         throw err;
