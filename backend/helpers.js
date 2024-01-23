@@ -1,6 +1,5 @@
 const { MobileAuth } = require('./auth')
 const chalk = require('chalk')
-
 const sleep = m => new Promise(r => setTimeout(r, m));
 
 // generates a aleatory timestamp in accordance with the current date
@@ -25,7 +24,7 @@ function generateTimestamp() {
         );
     } while (randomTimestamp > currentDate); // Ensure the timestamp is not in the future
 
-    return randomTimestamp.getTime();
+    return randomTimestamp.getTime() / 1000;
 }
 
 
